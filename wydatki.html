@@ -1774,9 +1774,8 @@ let gsiLoaded = false;
 function initGoogleAuth(){
   try{
     const saved=_ss.getItem('moni_user');
-    const skip=_ss.getItem('moni_skip');
     if(saved){ currentUser=JSON.parse(saved); showUser(currentUser); }
-    if(currentUser||skip){ showApp(); }
+    // Login temporarily disabled — app always starts directly
   }catch(e){}
 }
 
@@ -1896,17 +1895,12 @@ if('serviceWorker' in navigator){
   });
 }
 
-// Dismiss splash, then show login if needed
+// Dismiss splash → show app directly (login temporarily disabled)
 setTimeout(()=>{
   const s=document.getElementById('splash');
+  showApp();
   if(s){ s.classList.add('hide'); }
-  setTimeout(()=>{
-    if(s) s.style.display='none';
-    if(!currentUser && !_ss.getItem('moni_skip')){
-      const ls=document.getElementById('login-screen');
-      if(ls) ls.classList.remove('hide');
-    }
-  },500);
+  setTimeout(()=>{ if(s) s.style.display='none'; },500);
 },1800);
 </script>
 </body>
