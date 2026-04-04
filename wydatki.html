@@ -1863,46 +1863,6 @@ try{ loadState(); }catch(err){ console.warn('loadState error:', err); }
 const _initNames=CAT_NAMES[lang]||CAT_NAMES['pl'];
 userCats.forEach(c=>{ if(_initNames[c.id]) c.name=_initNames[c.id]; });
 
-// Inject test data only if app is empty
-(function injectTestData(){
-  const hasAny=Object.keys(expenses).some(k=>expenses[k]&&expenses[k].length>0);
-  if(hasAny) return;
-  const seed=[
-    {k:'2026-01',rows:[
-      {d:'2026-01-02',cat:'zywnosc',amt:187.40},{d:'2026-01-03',cat:'prad',amt:210.00},
-      {d:'2026-01-05',cat:'woda',amt:89.50},{d:'2026-01-07',cat:'paliwo',amt:240.00},
-      {d:'2026-01-09',cat:'zywnosc',amt:143.20},{d:'2026-01-12',cat:'ubrania',amt:320.00},
-      {d:'2026-01-14',cat:'szkola',amt:150.00},{d:'2026-01-15',cat:'zywnosc',amt:95.60},
-      {d:'2026-01-17',cat:'paliwo',amt:180.00},{d:'2026-01-19',cat:'inne',amt:45.00},
-      {d:'2026-01-21',cat:'zywnosc',amt:210.80},{d:'2026-01-23',cat:'kredyty',amt:850.00},
-      {d:'2026-01-25',cat:'smieci',amt:55.00},{d:'2026-01-28',cat:'zywnosc',amt:167.30},
-      {d:'2026-01-30',cat:'paliwo',amt:195.00},
-    ]},
-    {k:'2026-02',rows:[
-      {d:'2026-02-01',cat:'kredyty',amt:850.00},{d:'2026-02-02',cat:'zywnosc',amt:201.50},
-      {d:'2026-02-04',cat:'prad',amt:195.00},{d:'2026-02-06',cat:'woda',amt:91.00},
-      {d:'2026-02-08',cat:'paliwo',amt:220.00},{d:'2026-02-10',cat:'zywnosc',amt:134.70},
-      {d:'2026-02-12',cat:'ubrania',amt:189.99},{d:'2026-02-14',cat:'inne',amt:120.00},
-      {d:'2026-02-16',cat:'zywnosc',amt:178.40},{d:'2026-02-18',cat:'szkola',amt:75.00},
-      {d:'2026-02-20',cat:'paliwo',amt:210.00},{d:'2026-02-22',cat:'smieci',amt:55.00},
-      {d:'2026-02-24',cat:'zywnosc',amt:156.90},{d:'2026-02-26',cat:'inne',amt:89.00},
-      {d:'2026-02-28',cat:'paliwo',amt:165.00},
-    ]},
-    {k:'2026-03',rows:[
-      {d:'2026-03-01',cat:'kredyty',amt:850.00},{d:'2026-03-03',cat:'zywnosc',amt:215.60},
-      {d:'2026-03-05',cat:'prad',amt:220.00},{d:'2026-03-07',cat:'woda',amt:94.00},
-      {d:'2026-03-08',cat:'paliwo',amt:230.00},{d:'2026-03-10',cat:'zywnosc',amt:148.30},
-      {d:'2026-03-12',cat:'ubrania',amt:450.00},{d:'2026-03-14',cat:'szkola',amt:200.00},
-      {d:'2026-03-15',cat:'smieci',amt:55.00},{d:'2026-03-17',cat:'zywnosc',amt:189.70},
-      {d:'2026-03-19',cat:'paliwo',amt:195.00},{d:'2026-03-21',cat:'inne',amt:67.50},
-    ]},
-  ];
-  seed.forEach(function(item){
-    var k=item.k, rows=item.rows;
-    expenses[k]=rows.map((r,i)=>({id:Date.now()+i*13+k.charCodeAt(5),amount:r.amt,date:r.d,cat:r.cat}));
-  });
-  persist();
-})();
 
 try{applyTheme();}catch(e){}
 try{applyLang();}catch(e){}
@@ -1925,14 +1885,13 @@ if('serviceWorker' in navigator){
 // Dismiss splash, then show login if needed
 setTimeout(()=>{
   const s=document.getElementById('splash');
+  // Show login BEFORE hiding splash — no flash of main screen
+  if(!currentUser && !_ss.getItem('moni_skip')){
+    const ls=document.getElementById('login-screen');
+    if(ls) ls.classList.remove('hide');
+  }
   if(s){ s.classList.add('hide'); }
-  setTimeout(()=>{
-    if(s) s.style.display='none';
-    if(!currentUser && !_ss.getItem('moni_skip')){
-      const ls=document.getElementById('login-screen');
-      if(ls) ls.classList.remove('hide');
-    }
-  },500);
+  setTimeout(()=>{ if(s) s.style.display='none'; },500);
 },1800);
 </script>
 </body>
