@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Moni — Track your money</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0F2F2F">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS (Safari "Dodaj do ekranu głównego") -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Moni">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="icon.svg">
 <style>/* Geist font removed for offline use */</style>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -1894,6 +1908,19 @@ try{applyTheme();}catch(e){}
 try{applyLang();}catch(e){}
 try{renderMonthly();}catch(e){console.warn('renderMonthly:',e);}
 try{initGoogleAuth();}catch(e){}
+
+// ==============================================
+//  PWA — Service Worker registration
+// ==============================================
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      console.log('[Moni] SW registered, scope:', reg.scope);
+    }).catch(function(err){
+      console.warn('[Moni] SW registration failed:', err);
+    });
+  });
+}
 
 // Dismiss splash, then show login if needed
 setTimeout(()=>{

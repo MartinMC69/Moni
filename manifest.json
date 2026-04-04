@@ -1,0 +1,33 @@
+{
+  "name": "Moni — Track your money",
+  "short_name": "Moni",
+  "description": "Kontroluj swój budżet domowy",
+  "start_url": "./wydatki.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0F2F2F",
+  "theme_color": "#0F2F2F",
+  "lang": "pl",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
