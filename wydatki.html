@@ -395,6 +395,9 @@ select{background:var(--surface2);border:1px solid var(--line);border-radius:8px
   </div>
 </div>
 
+<!-- == APP (hidden until login/skip) == -->
+<div id="app-wrap" style="display:none">
+
 <!-- == NAV == -->
 <nav>
   <div class="nav-logo">
@@ -621,6 +624,8 @@ select{background:var(--surface2);border:1px solid var(--line);border-radius:8px
 </div>
 
 <div class="toast" id="toast"></div>
+
+</div><!-- /#app-wrap -->
 
 <script>
 // Safe storage wrapper - works on file:// and private mode
@@ -1769,7 +1774,9 @@ let gsiLoaded = false;
 function initGoogleAuth(){
   try{
     const saved=_ss.getItem('moni_user');
+    const skip=_ss.getItem('moni_skip');
     if(saved){ currentUser=JSON.parse(saved); showUser(currentUser); }
+    if(currentUser||skip){ showApp(); }
   }catch(e){}
 }
 
@@ -1800,11 +1807,17 @@ function handleGoogleCredential(r){
   }catch(e){ toast('Błąd logowania'); }
 }
 
+function showApp(){
+  var w=document.getElementById('app-wrap');
+  if(w) w.style.display='block';
+}
+
 function handleLogin(user){
   currentUser=user;
   try{ _ss.setItem('moni_user',JSON.stringify(user)); }catch(e){}
   const ls=document.getElementById('login-screen');
   if(ls) ls.classList.add('hide');
+  showApp();
   showUser(user);
   toast('Zalogowano jako '+user.name.split(' ')[0]+' ✓');
 }
@@ -1825,6 +1838,7 @@ function skipLogin(){
   try{ _ss.setItem('moni_skip','1'); }catch(e){}
   const ls=document.getElementById('login-screen');
   if(ls) ls.classList.add('hide');
+  showApp();
 }
 
 function toggleUserMenu(){
@@ -1885,13 +1899,14 @@ if('serviceWorker' in navigator){
 // Dismiss splash, then show login if needed
 setTimeout(()=>{
   const s=document.getElementById('splash');
-  // Show login BEFORE hiding splash — no flash of main screen
-  if(!currentUser && !_ss.getItem('moni_skip')){
-    const ls=document.getElementById('login-screen');
-    if(ls) ls.classList.remove('hide');
-  }
   if(s){ s.classList.add('hide'); }
-  setTimeout(()=>{ if(s) s.style.display='none'; },500);
+  setTimeout(()=>{
+    if(s) s.style.display='none';
+    if(!currentUser && !_ss.getItem('moni_skip')){
+      const ls=document.getElementById('login-screen');
+      if(ls) ls.classList.remove('hide');
+    }
+  },500);
 },1800);
 </script>
 </body>
