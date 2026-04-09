@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Generuj ikony Moni</title>
+<style>
+  body{font-family:sans-serif;background:#0F2F2F;color:#e8f0f0;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:24px;padding:32px}
+  h2{margin:0;font-size:22px}
+  .row{display:flex;gap:24px;align-items:flex-end}
+  canvas{border-radius:16px;display:block}
+  a{display:block;margin-top:10px;padding:10px 20px;background:#4FD1A5;color:#0F2F2F;border-radius:8px;text-decoration:none;font-weight:700;text-align:center}
+  .card{display:flex;flex-direction:column;align-items:center;gap:8px;background:#1a3a3a;padding:20px;border-radius:16px}
+  .size{font-size:12px;opacity:.6}
+</style>
+</head>
+<body>
+<h2>Moni — Generator ikon PNG</h2>
+<div class="row" id="output"></div>
+<script>
+var svgSrc = `<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="115" fill="#0F2F2F"/>
+  <circle cx="256" cy="256" r="215" fill="#1a3a3a"/>
+  <path d="M140 315 Q178 155, 256 280 Q315 155, 375 280"
+        stroke="#FFFFFF" stroke-width="28" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="390" cy="108" r="42" fill="#4FD1A5"/>
+</svg>`;
+
+var sizes = [192, 512];
+var output = document.getElementById('output');
+
+sizes.forEach(function(size) {
+  var canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  var ctx = canvas.getContext('2d');
+
+  var img = new Image();
+  var blob = new Blob([svgSrc], {type: 'image/svg+xml'});
+  var url = URL.createObjectURL(blob);
+
+  img.onload = function() {
+    ctx.drawImage(img, 0, 0, size, size);
+    URL.revokeObjectURL(url);
+
+    var link = document.createElement('a');
+    link.href = canvas.toDataURL('image/png');
+    link.download = 'icon-' + size + '.png';
+    link.textContent = 'Pobierz icon-' + size + '.png';
+
+    // preview canvas (scaled down if 512)
+    var preview = document.createElement('canvas');
+    var pSize = Math.min(size, 128);
+    preview.width = pSize;
+    preview.height = pSize;
+    preview.getContext('2d').drawImage(canvas, 0, 0, pSize, pSize);
+
+    var card = document.createElement('div');
+    card.className = 'card';
+    var label = document.createElement('div');
+    label.className = 'size';
+    label.textContent = size + ' × ' + size + ' px';
+    card.appendChild(preview);
+    card.appendChild(label);
+    card.appendChild(link);
+    output.appendChild(card);
+  };
+
+  img.src = url;
+});
+</script>
+</body>
+</html>
